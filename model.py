@@ -1,7 +1,7 @@
 """Models and database functions for Ratings project."""
 
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy import desc
 # This is the connection to the SQLite database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
 # object, where we do most of our interactions (like committing, etc.)
@@ -15,7 +15,7 @@ db = SQLAlchemy()
 class User(db.Model):
     """User of ratings website."""
 
-    __tablename__ = "users"
+    __tablename__ = "Users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), nullable=True)
@@ -30,7 +30,48 @@ class User(db.Model):
 
 
 # Put your Movie and Rating model classes here.
+class Movie(db.Model):
+    """Movie table"""
 
+    __tablename__ = "Movies"
+
+    movie_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(50), nullable=False)
+    released_at = db.Column(db.DateTime, nullable=False)
+    imdb_url = db.Column(db.Text)
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        repr_string = "<Movie movie_id={id}, title={title}, released_at={date}, imdb_url={url}>"
+        return repr_string.format(id=self.movie_id, 
+                                  title=self.title, 
+                                  date=self.released_at, 
+                                  url=self.imdb_url)
+
+class Rating(db.Model):
+    """Ratings table"""
+
+    __tablename__ = "Ratings"
+
+    rating_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey("Movies.movie_id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("Users.user_id"), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+
+    movie = db.relationship('Movie',
+                            backref=db.backref("ratings"), order_by=desc(score))
+    user = db.relationship("User", 
+                           backref=db.backref("users"), order_by=user_id)
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        repr_string = "<Rating rating_id={id}, movie_id={movie}, user_id={user}, score={score}>"
+        return repr_string.format(id=self.rating_id,
+                                  movie=self.movie_id,
+                                  user=self.user_id,
+                                  score=self.score)
 
 ##############################################################################
 # Helper functions
