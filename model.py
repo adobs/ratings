@@ -37,8 +37,8 @@ class Movie(db.Model):
 
     movie_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(50), nullable=False)
-    released_at = db.Column(db.DateTime, nullable=False)
-    imdb_url = db.Column(db.Text)
+    released_at = db.Column(db.DateTime, nullable=True)
+    imdb_url = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
