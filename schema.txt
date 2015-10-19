@@ -1,0 +1,24 @@
+CREATE TABLE "Movies" (
+    movie_id INTEGER NOT NULL, 
+    title VARCHAR(50) NOT NULL, 
+    released_at DATETIME NOT NULL, 
+    imdb_url TEXT, 
+    PRIMARY KEY (movie_id)
+);
+CREATE TABLE "Users" (
+    user_id INTEGER NOT NULL, 
+    email VARCHAR(64), 
+    password VARCHAR(64), 
+    age INTEGER, 
+    zipcode VARCHAR(15), 
+    PRIMARY KEY (user_id)
+);
+CREATE TABLE "Ratings" (
+    rating_id INTEGER NOT NULL, 
+    movie_id INTEGER NOT NULL, 
+    user_id INTEGER NOT NULL, 
+    score INTEGER NOT NULL, 
+    PRIMARY KEY (rating_id), 
+    FOREIGN KEY(movie_id) REFERENCES "Movies" (movie_id), 
+    FOREIGN KEY(user_id) REFERENCES "Users" (user_id)
+);
