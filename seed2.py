@@ -31,9 +31,18 @@ def seed_movie_data(filename):
 
         #get data from split line
         id = int(data[0])
-        title = data[1]
         release = data[2]
         url = data[4]
+
+        #titles might have accented characters so test for this and decode
+        #them if so
+        title = data[1]
+        try:
+            title = unicode(title)
+        except UnicodeError:
+            print "Unicode error for ", title
+            title = title.decode("latin-1")
+            print "Unicode error for ", title
 
         #if there's a date there, parse it
         if release:
