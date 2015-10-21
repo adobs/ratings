@@ -1,13 +1,11 @@
 """Movie Ratings."""
 
 from jinja2 import StrictUndefined
-
-from flask import Flask
+from flask import Flask, render_template, redirect, request, flash, session
+from model import User, Rating, Movie, connect_to_db, db
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db
-
-
+ 
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -22,7 +20,15 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    return "<html><body>Placeholder for the homepage.</body></html>"
+    return render_template("home.html")
+
+@app.route("/users")
+def user_list():
+    """Show list of users."""
+
+    users = User.query.all() #users is a list
+    return render_template("users.html", users=users)
+
 
 
 if __name__ == "__main__":
