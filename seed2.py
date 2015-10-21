@@ -40,9 +40,7 @@ def seed_movie_data(filename):
         try:
             title = unicode(title)
         except UnicodeError:
-            print "Unicode error for ", title
             title = title.decode("latin-1")
-            print "Unicode error for ", title
 
         #if there's a date there, parse it
         if release:
@@ -83,8 +81,8 @@ def seed_rating_data(filename):
 if __name__ == "__main__":
     #connect db to app
     connect_to_db(app)
+    db.create_all()
 
-    #empty tables
     db.session.query(User).delete()
     db.session.query(Movie).delete()
     db.session.query(Rating).delete()

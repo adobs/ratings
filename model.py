@@ -18,7 +18,9 @@ class User(db.Model):
     __tablename__ = "Users"
 
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    email = db.Column(db.String(64), nullable=True)
+    fname = db.Column(db.String(32), nullable=True)
+    lname = db.Column(db.String(32), nullable=True)
+    email = db.Column(db.String(64), nullable=True, unique=True)
     password = db.Column(db.String(64), nullable=True)
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
@@ -29,7 +31,6 @@ class User(db.Model):
         return "<User user_id=%s email=%s>" % (self.user_id, self.email)
 
 
-# Put your Movie and Rating model classes here.
 class Movie(db.Model):
     """Movie table"""
 
