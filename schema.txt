@@ -7,7 +7,9 @@ CREATE TABLE "Movies" (
 );
 CREATE TABLE "Users" (
     user_id INTEGER NOT NULL, 
-    email VARCHAR(64), 
+    fname VARCHAR(32),
+    lname VARCHAR(32),
+    email VARCHAR(64) UNIQUE, 
     password VARCHAR(64), 
     age INTEGER, 
     zipcode VARCHAR(15), 
