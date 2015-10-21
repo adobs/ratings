@@ -30,6 +30,13 @@ def user_list():
     return render_template("users.html", users=users)
 
 
+@app.route("/registration")
+def show_registration_form():
+
+    return render_template("registration.html")
+
+
+
 @app.route("/newuser", methods=["POST"])
 # if user not in database:
 #     go to login
@@ -40,7 +47,8 @@ def process_new_user():
     fname = request.form.get("fname")
 
     #check to see if the user is already registered
-    #flash different message depending on that
+    #flash different message depending on that, and if they're new
+    #add their info to the database
     if db.session.query(User).filter(User.email == email).first():
         msg = "Hi, {name}!  You are already registered with us.  Please log in."
         flash(msg.format(name=fname))
@@ -48,9 +56,24 @@ def process_new_user():
         msg = "Hi, {name}! You have successfully created an account. Please log in."
         flash(msg.format(name=fname))
 
+        #get the rest of the user's info
+        lname = request.form.get("lname")
+        password = request.form.get("password")
+        age = int(request.form.get("age"))
+        zipcode = request.form.get("zipcode")
+
+        #add user to the database
+        new_user = User(fname=fname, lname=lname, email=email, age=age,
+                        zipcode=zipcode, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+
     return redirect("/login")
 
-    
+@app.route("/login")
+def show_login_page():
+    return "HI"
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
