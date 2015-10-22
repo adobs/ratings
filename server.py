@@ -58,7 +58,7 @@ def process_new_user():
 
         #get the rest of the user's info
         lname = request.form.get("lname")
-        password = request.form.get("password")
+        password = hash(request.form.get("password"))
         age = int(request.form.get("age"))
         zipcode = request.form.get("zipcode")
 
@@ -70,9 +70,39 @@ def process_new_user():
 
     return redirect("/login")
 
+
 @app.route("/login")
 def show_login_page():
-    return "HI"
+    return render_template("login.html")
+
+
+@app.route("/do-login", methods=["POST"])
+def log_in():
+    #look up user in the database
+    email = request.form.get("email")
+    password = hash(request.form.get("password"))
+    user = db.session.query(User).filter(User.email == email).first()
+
+    #check if email is in our database
+    if user is not None: #email was found
+        #if it is, check password against database
+        if password == int(user.password): #success
+            #TODO change navbar
+
+            #add user to session
+            session["user_id"] = user.user_id
+            session["fname"] = user.fname
+
+            #flash message and redirect to homepage
+            flash("You are successfully logged in.")
+            return redirect("/")
+        else: #wrong password
+            flash("Incorrect password. Please try again.")
+            return redirect("/login")
+    else: #user not found in database
+        flash("Email did not match a registered user. Please try again.")
+        return redirect("/login")
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
