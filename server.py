@@ -85,30 +85,43 @@ def log_in():
 
     #check if email is in our database
     if user is not None: #email was found
+
         #if it is, check password against database
         if password == int(user.password): #success
+            #get user's name
+            fname = user.fname
+            
             #TODO change navbar
 
             #add user to session
             session["user_id"] = user.user_id
-            session["fname"] = user.fname
+            session["fname"] = fname
 
             #flash message and redirect to homepage
-            flash("You are successfully logged in.")
+            message = "Welcome, {name}. You are successfully logged in."
+            flash(message.format(name=fname))
             return redirect("/")
+
         else: #wrong password
             flash("Incorrect password. Please try again.")
             return redirect("/login")
+
     else: #user not found in database
         flash("Email did not match a registered user. Please try again.")
         return redirect("/login")
 
+
 @app.route("/logout")
 def log_out():
+    fname = session["fname"]
+    message = "Goodbye, {name}!"
+    flash(message.format(name=fname))
+
     session.clear()
+
     return redirect("/")
 
-    
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
