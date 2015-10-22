@@ -30,6 +30,25 @@ def user_list():
     return render_template("users.html", users=users)
 
 
+@app.route("/user/<int:user_id>")
+def show_user_info(user_id):
+    """Show info for a particular user"""
+
+    user = db.session.query(User).filter(User.user_id == user_id).one()
+    fname = user.fname
+    lname = user.lname
+    email = user.email
+    age = user.age
+    zipcode = user.zipcode
+    ratings = (db.session.query(Movie.title, Rating.score)
+                         .join(Rating)
+                         .filter(Rating.user_id == user_id)
+                         .all())
+
+    return render_template("user-info.html", user_id=user_id, fname=fname,
+                           lname=lname, email=email, age=age, zipcode=zipcode, 
+                           ratings=ratings)
+
 @app.route("/registration")
 def show_registration_form():
     """Show new user registration page"""
@@ -121,9 +140,8 @@ def log_out():
     
     fname = session["fname"]
     message = "Goodbye, {name}!"
-    flash(message.format(name=fname))
-
     session.clear()
+    flash(message.format(name=fname))
 
     return redirect("/")
 
