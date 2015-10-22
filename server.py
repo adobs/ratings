@@ -18,13 +18,13 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route('/')
 def index():
-    """Homepage."""
+    """Show the homepage"""
 
     return render_template("home.html")
 
 @app.route("/users")
 def user_list():
-    """Show list of users."""
+    """Show list of users"""
 
     users = User.query.all() #users is a list
     return render_template("users.html", users=users)
@@ -32,26 +32,25 @@ def user_list():
 
 @app.route("/registration")
 def show_registration_form():
+    """Show new user registration page"""
 
     return render_template("registration.html")
 
 
-
 @app.route("/newuser", methods=["POST"])
-# if user not in database:
-#     go to login
-# else flash you are already a user, please login
-# go to login
 def process_new_user():
+    """Process user registration form"""
+
+    #get info necessary to check if user is new
     email = request.form.get("email")
     fname = request.form.get("fname")
 
     #check to see if the user is already registered
-    #flash different message depending on that, and if they're new
-    #add their info to the database
     if db.session.query(User).filter(User.email == email).first():
         msg = "Hi, {name}!  You are already registered with us.  Please log in."
         flash(msg.format(name=fname))
+
+    #if not, add user to database    
     else:
         msg = "Hi, {name}! You have successfully created an account. Please log in."
         flash(msg.format(name=fname))
@@ -68,25 +67,30 @@ def process_new_user():
         db.session.add(new_user)
         db.session.commit()
 
+    #in either case, take the user to login page
     return redirect("/login")
 
 
 @app.route("/login")
 def show_login_page():
+    """Show login page"""
+
     return render_template("login.html")
 
 
 @app.route("/do-login", methods=["POST"])
 def log_in():
+    """Validate email and password"""
+
     #look up user in the database
     email = request.form.get("email")
     password = hash(request.form.get("password"))
     user = db.session.query(User).filter(User.email == email).first()
 
-    #check if email is in our database
+    #check if user is in our database
     if user is not None: #email was found
 
-        #if it is, check password against database
+        #if found, check password against database
         if password == int(user.password): #success
             #get user's name
             fname = user.fname
@@ -113,6 +117,8 @@ def log_in():
 
 @app.route("/logout")
 def log_out():
+    """Print goodbye message, clear session, and redirect to homepage"""
+    
     fname = session["fname"]
     message = "Goodbye, {name}!"
     flash(message.format(name=fname))

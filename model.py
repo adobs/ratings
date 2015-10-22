@@ -50,6 +50,7 @@ class Movie(db.Model):
                                   date=self.released_at, 
                                   url=self.imdb_url)
 
+
 class Rating(db.Model):
     """Ratings table"""
 

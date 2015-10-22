@@ -6,24 +6,29 @@ from datetime import datetime
 def seed_user_data(filename):
     """Adds user data to database"""
 
+    #open file and go through it line by line
     log_file = open(filename)
 
     for line in log_file:
         data = line.strip().split("|") #data is a list
 
+        #get data from split line
         id = int(data[0])
         age = int(data[1])
         zip = data[4]
 
+        #create a new record and add it to the queue
         new_user = User(user_id=id, age=age, zipcode=zip)
         db.session.add(new_user)
 
+    #commit changes
     db.session.commit()
 
 
 def seed_movie_data(filename):
     """Adds movie data to database"""
 
+    #open file and go through it line by line
     log_file = open(filename)
 
     for line in log_file:
@@ -60,19 +65,23 @@ def seed_movie_data(filename):
 def seed_rating_data(filename):
     """Adds rating data to database"""
 
+    #open file and go through it line by line
     log_file = open(filename)
 
     for line in log_file:
         data = line.strip().split("\t")
 
+        #get data from split line
         user_id = data[0]
         movie_id = data[1]
         score = data[2]
 
-        new_rating = Rating(movie_id=movie_id, user_id=user_id, score=score)
-
+        #create a new record and add it to the queue
+        new_rating = Rating(movie_id=movie_id, user_id=user_id, 
+                            score=score)
         db.session.add(new_rating)
 
+    #commit changes
     db.session.commit()
 
 
@@ -81,8 +90,11 @@ def seed_rating_data(filename):
 if __name__ == "__main__":
     #connect db to app
     connect_to_db(app)
+
+    #create the database
     db.create_all()
 
+    #empty tables
     db.session.query(User).delete()
     db.session.query(Movie).delete()
     db.session.query(Rating).delete()
