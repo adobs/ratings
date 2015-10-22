@@ -49,6 +49,45 @@ def show_user_info(user_id):
                            lname=lname, email=email, age=age, zipcode=zipcode, 
                            ratings=ratings)
 
+@app.route("/movies")
+def movie_list():
+    """Show list of movies"""
+
+    movies = (db.session.query(Movie.title, Movie.movie_id)
+                        .order_by(Movie.title)
+                        .all())
+
+    for title, movie_id in movies:
+        title = title.encode("latin-1")
+    return render_template("movies.html", movies=movies)
+
+
+@app.route("/movie/<int:movie_id>")
+def show_movie_info(movie_id):
+    """Show info for a particular movie"""
+
+    movie = db.session.query(Movie).filter(Movie.movie_id == movie_id).one()
+    avg_rating = (db.session.query(db.func.avg(Rating.score))
+                           .filter(Rating.movie_id == movie_id).one())[0]
+    users_rating = (db.session.query(Rating.score)
+                              .filter(Rating.user_id == 
+                                      session.get("user_id", None))
+                              .first())
+    if users_rating:
+        users_rating = users_rating[0]
+
+    ratings = (db.session.query(User.user_id, Rating.score)
+                         .join(Rating)
+                         .filter(Rating.movie_id == movie_id)
+                         .order_by(User.user_id)
+                         .all())
+
+    return render_template("movie-info.html", movie=movie,
+                                              users_rating=users_rating, 
+                                              avg_rating=avg_rating, 
+                                              ratings=ratings)
+
+
 @app.route("/registration")
 def show_registration_form():
     """Show new user registration page"""
@@ -123,7 +162,7 @@ def log_in():
             #flash message and redirect to homepage
             message = "Welcome, {name}. You are successfully logged in."
             flash(message.format(name=fname))
-            return redirect("/")
+            return redirect("/user/" + str(user.user_id))
 
         else: #wrong password
             flash("Incorrect password. Please try again.")
@@ -138,10 +177,13 @@ def log_in():
 def log_out():
     """Print goodbye message, clear session, and redirect to homepage"""
     
-    fname = session["fname"]
-    message = "Goodbye, {name}!"
-    session.clear()
-    flash(message.format(name=fname))
+    #if there's a user logged in, clear the session and queue up a 
+    #goodbye message to flash
+    if session.get("user_id"):
+        fname = session["fname"]
+        message = "Goodbye, {name}!"
+        session.clear()
+        flash(message.format(name=fname))
 
     return redirect("/")
 

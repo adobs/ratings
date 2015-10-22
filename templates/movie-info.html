@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title%}{{ movie.title }} {% endblock %}
+
+{% block body %}
+
+<h1>{{ movie.title }}</h1>
+
+<p>IMDB: <a href="{{ movie.imdb_url }}">{{ movie.title }}</a></p>
+<p>Average rating: {{ "%.1f"|format(avg_rating) }}</p>
+{% if users_rating %}
+   <form method="POST" action="/update-rating/{{ movie.movie_id }}">
+     <label>Rate again!<select name="rating" default="{{ users_rating }}">
+        <option value="1">1
+        <option value="2">2
+        <option value="3">3
+        <option value="4">4
+        <option value="5">5
+      </select>
+    </label>
+  </form>
+
+{% else %}
+   <form method="POST" action="/rate/{{ movie.movie_id }}">
+     <label>Rate!  <select name="rating">
+        <option value="1">1
+        <option value="2">2
+        <option value="3">3
+        <option value="4">4
+        <option value="5">5
+      </select>
+    </label>
+  </form>
+{% endif %}
+
+<p>Ratings:</p>
+<ul>
+  {% for user, rating in ratings %}
+    <li>User {{ user }}: {{ rating }}</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

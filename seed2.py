@@ -45,7 +45,7 @@ def seed_movie_data(filename):
         try:
             title = unicode(title)
         except UnicodeError:
-            title = title.decode("latin-1")
+            title = title.decode("utf-8")
 
         #if there's a date there, parse it
         if release:
