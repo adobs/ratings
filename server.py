@@ -103,7 +103,12 @@ def log_in():
         flash("Email did not match a registered user. Please try again.")
         return redirect("/login")
 
+@app.route("/logout")
+def log_out():
+    session.clear()
+    return redirect("/")
 
+    
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
