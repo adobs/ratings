@@ -149,7 +149,10 @@ def rate_movie(movie_id):
     db.session.add(new_rating)
 
     #commit changes
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        return redirect("/update-rating/" + str(movie_id))
 
     #reload movie page including new rating
     return redirect("/movie/" + str(movie_id))

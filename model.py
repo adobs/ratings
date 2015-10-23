@@ -67,7 +67,11 @@ class Rating(db.Model):
     user = db.relationship("User", 
                            backref=db.backref("ratings"), order_by=desc(score))
 
-    __table_args__ = (schema.UniqueConstraint(user_id),)
+    #TODO clean seed data so we can put this back in then fix add new rating
+    #route to try adding the new rating (which will error out if it's a duplicate)
+    #and then reroute to the update route (this also means add/update ratings hasn't
+    #been fully tested yet)
+    __table_args__ = (schema.UniqueConstraint(user_id, movie_id),)
 
 
     def __repr__(self):
