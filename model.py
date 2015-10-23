@@ -1,7 +1,7 @@
 """Models and database functions for Ratings project."""
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
+from sqlalchemy import desc, schema
 # This is the connection to the SQLite database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
 # object, where we do most of our interactions (like committing, etc.)
@@ -56,6 +56,7 @@ class Rating(db.Model):
 
     __tablename__ = "Ratings"
 
+
     rating_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     movie_id = db.Column(db.Integer, db.ForeignKey("Movies.movie_id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("Users.user_id"), nullable=False)
@@ -65,6 +66,9 @@ class Rating(db.Model):
                             backref=db.backref("ratings"), order_by=desc(score))
     user = db.relationship("User", 
                            backref=db.backref("ratings"), order_by=desc(score))
+
+    __table_args__ = (schema.UniqueConstraint(user_id),)
+
 
     def __repr__(self):
         """Provide helpful representation when printed."""
